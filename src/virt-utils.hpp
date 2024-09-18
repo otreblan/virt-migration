@@ -14,21 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with virt-migration.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
+#pragma once
+
 #include <libvirt/libvirt.h>
 #include <libvirt/virterror.h>
 
-#include "virt-utils.hpp"
+#include <cstdlib>
+#include <memory>
 
-int main()
+namespace vir
 {
-	auto source = vir::make_connect_ptr("qemu:///system", virConnectAuthPtrDefault, 0);
 
-	VIRT_CHECK(source);
-
-	auto domain = vir::make_domain_ptr(source.get(), "aaaa");
-
-	VIRT_CHECK(domain);
-
-	return EXIT_SUCCESS;
+#define VIRT_CHECK(x) { \
+	if(!(x)) { \
+		fprintf(stderr, "%s\n", virGetLastErrorMessage()); \
+		exit(EXIT_FAILURE); \
+	} \
 }
+
+using connect_ptr = std::unique_ptr<virConnect, decltype(&virConnectClose)>;
+using domain_ptr = std::unique_ptr<virDomain, decltype(&virDomainFree)>;
+
+connect_ptr make_connect_ptr(virConnectPtr ptr = nullptr);
+connect_ptr make_connect_ptr(const char *name, virConnectAuthPtr auth, unsigned int flags);
+
+domain_ptr make_domain_ptr(virDomainPtr ptr = nullptr);
+domain_ptr make_domain_ptr(virConnectPtr conn, const char* name);
+
+};
