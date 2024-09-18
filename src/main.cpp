@@ -15,20 +15,39 @@
 // along with virt-migration.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <string>
+
 #include <libvirt/libvirt.h>
 #include <libvirt/virterror.h>
 
 #include "virt-utils.hpp"
 
-int main()
+void usage(int exit_code)
 {
+	std::cout << "virt-migration DOMAIN DIST_URI\n";
+
+	exit(exit_code);
+}
+
+int main(int argc, char** argv)
+{
+	if(argc < 3)
+	{
+		usage(EXIT_FAILURE);
+	}
+
+	std::string domain_name = argv[1];
+	std::string dist_uri    = argv[2];
+
 	auto source = vir::make_connect_ptr("qemu:///system", virConnectAuthPtrDefault, 0);
 
 	VIRT_CHECK(source);
 
-	auto domain = vir::make_domain_ptr(source.get(), "aaaa");
+	auto domain = vir::make_domain_ptr(source.get(), domain_name.c_str());
 
 	VIRT_CHECK(domain);
+
+	VIRT_CHECK(virDomainMigrateToURI(domain.get(), dist_uri.c_str(), VIR_MIGRATE_LIVE, nullptr, 0));
 
 	return EXIT_SUCCESS;
 }
