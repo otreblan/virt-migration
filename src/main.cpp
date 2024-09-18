@@ -16,17 +16,7 @@
 
 #include <iostream>
 
-//https://hannes.hauswedell.net/post/2017/12/09/fmv/
-#if defined(__x86_64__)
-[[gnu::target_clones("default,arch=x86-64-v4")]]
-#endif
-void f()
-{
-	std::cout << "Hello\n";
-}
-
 int main()
 {
-	f();
 	return 0;
 }
