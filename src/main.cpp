@@ -47,7 +47,13 @@ int main(int argc, char** argv)
 
 	VIRT_CHECK(domain);
 
-	VIRT_CHECK(virDomainMigrateToURI(domain.get(), dist_uri.c_str(), VIR_MIGRATE_LIVE, nullptr, 0));
+	virDomainMigrateToURI(domain.get(), dist_uri.c_str(),
+		VIR_MIGRATE_LIVE |
+		VIR_MIGRATE_PEER2PEER |
+		//VIR_MIGRATE_TUNNELLED |
+		VIR_MIGRATE_UNDEFINE_SOURCE |
+		VIR_MIGRATE_PERSIST_DEST,
+		nullptr, 0);
 
 	return EXIT_SUCCESS;
 }

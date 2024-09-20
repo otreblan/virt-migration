@@ -3,20 +3,20 @@
 set -e
 
 MIGRATE_HOST="aru2"
-NAME="guest14-debian"
+NAME="guest17-debian"
 IMAGES_DIR="/var/lib/libvirt/images"
 
-sudo pacman -S --needed --noconfirm libvirt dmidecode qemu-full virt-viewer virt-install iptables-nft nfs-utils krb5
+sudo pacman -S --needed --noconfirm libvirt dmidecode qemu-full virt-viewer virt-install iptables-nft nfs-utils # krb5
 sudo usermod -aG libvirt "$USER"
 
 # https://wiki.archlinux.org/title/KVM#Checking_support_for_KVM
 # https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/virtualization_host_configuration_and_guest_installation_guide/app_tcp_ports#App_TCP_Ports
 
 # /etc/exports
-# /mnt 192.168.1.0/24(rw,no_root_squash,sync)
+# /mnt 192.168.18.0/24(rw,no_root_squash,sync)
 
 ssh "root@$MIGRATE_HOST" "systemctl start libvirtd virtlogd "
-sudo systemctl start libvirtd virtlogd nfs-server krb5-kdc krb5-kadmind
+sudo systemctl start libvirtd virtlogd nfs-server #krb5-kdc krb5-kadmind
 
 #sudo exportfs -arv
 
@@ -42,9 +42,9 @@ sudo virt-install \
 	--graphics none \
 	--os-variant debianbookworm
 
-sudo virsh migrate \
-	--live  \
-	--verbose \
-	--comp-methods zstd \
-	--parallel \
-	"$NAME" "qemu+ssh://$MIGRATE_HOST/system"
+#sudo virsh migrate \
+#	--live  \
+#	--verbose \
+#	--comp-methods zstd \
+#	--parallel \
+#	"$NAME" "qemu+ssh://$MIGRATE_HOST/system"
