@@ -6,7 +6,7 @@
 
 ## Dependencies
 
-* `asciidoctor`
+* `libvirt`
 * `bash-completion`
 * `cmake`
 
